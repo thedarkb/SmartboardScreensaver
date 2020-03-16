@@ -34,6 +34,7 @@ fish fishList[ROWS];//Creates a fish object for each row on the screen.
 int score=0;
 int highScore=100;
 unsigned char quarry=0;//Contains the target fish type.
+unsigned char quarrySpawned=0;//Non zero if the quarry has been spawned.
 
 int initialise() {
 	memset(&fishList,0,sizeof fishList);//Initialises the fish array.
@@ -61,7 +62,10 @@ void fishTick() {
 			SDL_BlitSurface(fishSprites,&spriteOnSheet,s,&fishPosition);//Blits sprite to the screen.
 		} else {
 			if(rand()%2){
-				fishList[i].type=rand()%(FISHCOUNT-1);//Selects a random fish from the sheet.
+				if(!quarrySpawned) {
+					fishList[i].type=quarry;
+					quarrySpawned=1;
+				} else fishList[i].type=rand()%(FISHCOUNT-1);//Selects a random fish from the sheet.
 				fishList[i].speed=(rand()%3)+5;//Sets the speed to a random number between five and eight pixels per frame.
 				fishList[i].alive=1;
 				fishList[i].x=-64;//Sets it slightly offscreen so that the player won't perceive pop-in.
@@ -82,6 +86,7 @@ void hitCheck() {
 			if(fishList[(checkY/SIZE)-1].type==quarry) {
 				score+=500;
 				quarry=rand()%(FISHCOUNT-1);//Select a new fish type to pursue.
+				quarrySpawned=0;
 				fishList[(checkY/SIZE)-1].alive=0;
 				printf("Fish hit registered.\n");
 			}
