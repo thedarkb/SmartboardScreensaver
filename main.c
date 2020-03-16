@@ -124,10 +124,15 @@ void loop() {
 	SDL_BlitSurface(fishSprites,&spriteOnSheet,s,&qlabelRect);
 
 	SDL_Color fC={255,255,255};//Pure white text.
-	char* scoreMsg;
+	char* scoreMsg="This place holder should probably be long enough :P";
 	sprintf(scoreMsg,"Score: %d", score); //Creates a string to display the current score.
 	scoreLabel=TTF_RenderText_Solid(f,scoreMsg,fC);//Renders the message using font 'f', message 'scoreMsg', and colour 'fC'.
 	SDL_BlitSurface(scoreLabel,NULL,s,NULL);//Blits the rendered message to the screen.
+
+	sprintf(scoreMsg,"High Score: %d", highScore); //Creates a string to display the current high score.
+	scoreLabel=TTF_RenderText_Solid(f,scoreMsg,fC);//Renders the message using font 'f', message 'scoreMsg', and colour 'fC'.
+	SDL_Rect hsOffset={4,HEIGHT-32,0,0};//Positions the High Score display at the bottom of the screen.
+	SDL_BlitSurface(scoreLabel,NULL,s,&hsOffset);//Blits the rendered message to the screen.
 
 	SDL_UpdateWindowSurface(w);
 	if(score>highScore) highScore=score;
