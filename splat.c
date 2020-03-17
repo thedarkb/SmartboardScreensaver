@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL_ttf.h>
 #include <stdio.h>
+//221 minutes thusfar.
 
 #define TITLE "Splat the Alien"
 #define WIDTH 640
