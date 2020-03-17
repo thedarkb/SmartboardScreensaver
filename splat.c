@@ -20,14 +20,16 @@ SDL_Surface* fgLayer;
 SDL_Surface* spriteSheet;
 
 unsigned int frameCounter=0;
+unsigned int highScore=0;
+unsigned int score=0;
 
-typedef struct alien {//The main alien object.
+struct alien {//The main alien object.
 	char alive;//Non-zero if the alien is alive.
 	int y;//Alien's Y position.
 	int type;//Its sprite.
 	int speed;//Its speed.
 	int fx;//The rate at which its speed changes.
-} alien;
+} aliens[ALIENLIMIT];//Array of aliens, one for each column of width SIZE on the screen.
 
 struct projectile {//Projectile object.
 	char alive;//Non-zero if the projectile is in flight.
@@ -36,7 +38,10 @@ struct projectile {//Projectile object.
 	int quarry;//The alien it's locked on to.
 } projectile;
 
-alien aliens[ALIENLIMIT];//Array of aliens, one for each column of width SIZE on the screen.
+struct particle {//Particle object.
+	int y;//Y Position.
+	int type;//Sprite
+} particles[ALIENLIMIT];//Array of particles, one for each column of width SIZE on the screen.
 
 void blit(SDL_Surface* in, int x, int y, int w, int h) {//For background layers and things.
 	SDL_Rect dest={x,y,w,h};
@@ -54,7 +59,10 @@ void enemyTick() {
 		if(aliens[i].alive) {
 			if(!(frameCounter%12)) aliens[i].speed-=aliens[i].fx;//Change the alien's speed every twelve frames by fx.
 			aliens[i].y+=aliens[i].speed;//Shifts the alien on the Y axis.
-			if(aliens[i].y>HEIGHT || aliens[i].y<-SIZE*2) aliens[i].alive=0;//Kills the alien if it leaves the screen.
+			if(aliens[i].y>HEIGHT || aliens[i].y<-SIZE*2) {
+				aliens[i].alive=0;//Kills the alien if it leaves the screen.
+				if(score>0) score-=100;
+			}
 			else blitSprite(spriteSheet,aliens[i].type,i*SIZE,aliens[i].y,SIZE,SIZE);//Draws the alien on the screen.
 		} else if(!(rand()%3)) {//If the RNG outputs a multiple of three...
 			printf("Spawning new enemy\n");
@@ -97,6 +105,9 @@ void bulletTick() {
 		if(projectile.y>aliens[projectile.quarry].y && projectile.y<aliens[projectile.quarry].y+SIZE){//If the projectile has the same Y coordinate as its target.
 			aliens[projectile.quarry].alive=0;//Kill the target.
 			projectile.alive=0;//Destroy the projectile.
+			particles[projectile.quarry].y=aliens[projectile.quarry].y;
+			particles[projectile.quarry].type=7;
+			score+=1000;
 		}
 	}
 }
@@ -104,6 +115,8 @@ void bulletTick() {
 void loop() {
 	static int bgScroll=0;//The position of the rear parallax layer.
 	static int fgScroll=0;//The position of the front parallax layer.
+
+	if(score>highScore)highScore=score;
 
 	if(bgScroll+1<HEIGHT) bgScroll++;//Moves the background layer if its position is less than the height of the screen.
 	else bgScroll=0;//Else, reset the position.
@@ -118,8 +131,21 @@ void loop() {
 	enemyTick();//Handles the enemy logic.
 	clickTick();//Handles user input.
 	bulletTick();//Handles projectile logic.
+	for(int i=0;i<ALIENLIMIT;i++) blitSprite(spriteSheet,particles[i].type,i*SIZE,particles[i].y+=50,SIZE,SIZE);
 
 	blitSprite(spriteSheet,5,WIDTH/2-SIZE/2,HEIGHT-SIZE,SIZE,SIZE);//Draws the player.
+
+	SDL_Surface* scoreLabel;
+	SDL_Color fC={255,255,255};//Pure white text.
+	char* scoreMsg="The quick brown fox jumped over the lazy dog.";
+	sprintf(scoreMsg,"Score: %d", score); //Creates a string to display the current score.
+	scoreLabel=TTF_RenderText_Solid(f,scoreMsg,fC);//Renders the message using font 'f', message 'scoreMsg', and colour 'fC'.
+	blit(scoreLabel,4,4,0,0);
+
+	sprintf(scoreMsg,"High Score: %d", highScore); //Creates a string to display the current high score.
+	scoreLabel=TTF_RenderText_Solid(f,scoreMsg,fC);//Renders the message using font 'f', message 'scoreMsg', and colour 'fC'.
+	blit(scoreLabel,4,HEIGHT-SIZE,0,0);
+
 
 	SDL_UpdateWindowSurface(w);
 	frameCounter++;
@@ -128,7 +154,7 @@ void loop() {
 int main() {
 	SDL_Init(SDL_INIT_VIDEO);
 	TTF_Init();
-	f=TTF_OpenFont("splatgraph/font.ttf",40);
+	f=TTF_OpenFont("splatgraph/font.ttf",30);
 	w=SDL_CreateWindow(TITLE,0,0,WIDTH,HEIGHT,SDL_WINDOW_OPENGL);
 	s=SDL_GetWindowSurface(w);
 	bgLayer=IMG_Load("splatgraph/bglayer.png");
@@ -136,6 +162,7 @@ int main() {
 	spriteSheet=IMG_Load("splatgraph/spritesheet.png");
 	memset(&projectile,0,sizeof projectile);
 	memset(&aliens,0,sizeof aliens);
+	memset(&particles,255,sizeof particles);
 	emscripten_set_main_loop(loop,30,1);
 	return 0;
 }
