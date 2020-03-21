@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL_ttf.h>
 #include <stdio.h>
+//192m elapsed thusfar.
 
 #define TITLE "Connect Penguin"
 #define WIDTH 640
