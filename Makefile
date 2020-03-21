@@ -10,3 +10,7 @@ splat:
 	mkdir splat
 	cp index.html splat/
 	emcc splat.c -O3 -DNOSCROLL -DWEB -s MODULARIZE=1 -s ALLOW_MEMORY_GROWTH=1 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='["png"]' -s USE_SDL_TTF=2 --embed-file splatgraph -o splat/game.js
+connect:
+	mkdir connect
+	cp index.html connect/
+	emcc connect.c -O3 -DNOSCROLL -DWEB -s MODULARIZE=1 -s ALLOW_MEMORY_GROWTH=1 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='["png"]' -s USE_SDL_TTF=2 --embed-file connectgraph -o connect/game.js
