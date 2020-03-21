@@ -9,7 +9,7 @@
 #define WIDTH 640
 #define HEIGHT 512
 #define SIZE 64
-#define GRAVITY 1
+#define GRAVITY 2
 
 SDL_Window* w;//The window in the webpage.
 SDL_Surface* s;//The surface of the window.
