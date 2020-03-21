@@ -48,8 +48,8 @@ void winLoop() {
 		memset(&board,0,sizeof board);//Resets board.
 		mode=0;//Resets mode.
 	} else {//Turn is not reset as it means the loser is the first to move in the next round.
-		if(turn==1) blit(TTF_RenderText_Solid(fs,"Grey is the winner, tap the screen to play again!",fC),2,HEIGHT-64,0,0);
-		else blit(TTF_RenderText_Solid(fs,"Red is the winner, tap the screen to play again!",fC),2,HEIGHT-64,0,0);
+		if(turn==1) blit(TTF_RenderText_Solid(fs,"Grey is the winner, tap the screen to play again!",fC),2,HEIGHT-32,0,0);
+		else blit(TTF_RenderText_Solid(fs,"Red is the winner, tap the screen to play again!",fC),2,HEIGHT-32,0,0);
 	}
 }
 
@@ -112,6 +112,11 @@ void checkClick(){
 	if(!SDL_GetMouseState(NULL,NULL)) lastClick=0;
 	if(SDL_GetMouseState(&mX,&mY) & SDL_BUTTON(SDL_BUTTON_LEFT) && !lastClick){//If left click is depressed, but was not on the previous frame.
 		lastClick=1;//Store the state for the subsequent frame.
+		if(mX>WIDTH-SIZE && mY>HEIGHT-SIZE) {
+			memset(&board,0,sizeof board);
+			mode=0;
+			return;
+		}
 		int gridRef=(mX-96)/SIZE;//Finds the column in which the click took place.
 		if(gridRef>6 || gridRef<0) return;//If it is outside of the board, return.
 		if(board[gridRef][0].team) return;//If the column is full, return.
@@ -174,6 +179,7 @@ void loop(){
 	}
 	blit(TTF_RenderText_Solid(f,"Turn: ",fC),2,0,0,0);//Draws the turn label.
 	blitSprite(spriteSheet,turn-1,8,32,0,0);//Draws the block type of the current player.
+	blitSprite(spriteSheet,3,WIDTH-SIZE,HEIGHT-SIZE,0,0);
 
 	SDL_UpdateWindowSurface(w);
 }
@@ -182,7 +188,7 @@ int main() {
 	SDL_Init(SDL_INIT_VIDEO);
 	TTF_Init();
 	f=TTF_OpenFont("connectgraph/font.ttf",30);
-	fs=TTF_OpenFont("connectgraph/font.ttf",25);
+	fs=TTF_OpenFont("connectgraph/font.ttf",20);
 	w=SDL_CreateWindow(TITLE,0,0,WIDTH,HEIGHT,SDL_WINDOW_OPENGL);
 	s=SDL_GetWindowSurface(w);
 	bgLayer=IMG_Load("connectgraph/bglayer.png");
