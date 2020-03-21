@@ -5,7 +5,7 @@
 #include <stdio.h>
 //220m thusfar
 
-#define TITLE "Diverse Abilities Sensory Screensaver"
+#define TITLE "Find the Fish"
 #define WIDTH 640
 #define HEIGHT 512
 #define SIZE 64 //The size of each sprite.
