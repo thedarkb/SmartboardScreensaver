@@ -1,1 +1,5 @@
-A small smartboard game licensed under the GNU GPL
+These are designed to be built using Emscripten and are dependent on SDL2 and SDL2_image.
+To compile the fish game, type "make sense".
+To compile Connect Penguin, type "make connect".
+To compile the platformer, type "make trip".
+To compile the space shooter, type "make splat".
