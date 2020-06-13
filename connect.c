@@ -48,8 +48,11 @@ void winLoop() {
 		memset(&board,0,sizeof board);//Resets board.
 		mode=0;//Resets mode.
 	} else {//Turn is not reset as it means the loser is the first to move in the next round.
-		if(turn==1) blit(TTF_RenderText_Solid(fs,"Grey is the winner, tap the screen to play again!",fC),2,HEIGHT-32,0,0);
-		else blit(TTF_RenderText_Solid(fs,"Red is the winner, tap the screen to play again!",fC),2,HEIGHT-32,0,0);
+		SDL_Surface* text=NULL;
+		if(turn==1) text=TTF_RenderText_Solid(fs,"Grey is the winner, tap the screen to play again!",fC);
+		else text=TTF_RenderText_Solid(fs,"Red is the winner, tap the screen to play again!",fC);
+		blit(text,2,HEIGHT-32,0,0);
+		SDL_FreeSurface(text);
 	}
 }
 
@@ -177,7 +180,9 @@ void loop(){
 			blitSprite(spriteSheet,2,x*64+96,y*64+64,64,64);
 		}
 	}
-	blit(TTF_RenderText_Solid(f,"Turn: ",fC),2,0,0,0);//Draws the turn label.
+	SDL_Surface* text=NULL;
+	text=TTF_RenderText_Solid(f,"Turn: ",fC);
+	blit(text,2,0,0,0);//Draws the turn label.
 	blitSprite(spriteSheet,turn-1,8,32,0,0);//Draws the block type of the current player.
 	blitSprite(spriteSheet,3,WIDTH-SIZE,HEIGHT-SIZE,0,0);
 
